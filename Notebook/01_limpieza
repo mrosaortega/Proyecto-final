@@ -1,0 +1,19 @@
+import pandas as pd
+
+print("ESTOY EJECUTANDO EL ARCHIVO")
+
+# Cargar las primeras 70.000 filas de la unión
+df_trabajo = pd.read_csv("Data/Raw/Output/00_Uniones.csv",
+    nrows=70000)
+
+# Comprobar tamaño
+print("Filas:", len(df_trabajo))
+print("Columnas:", len(df_trabajo.columns))
+
+# Guardar muestra de trabajo
+df_trabajo.to_csv(
+    "Data/Raw/Output/01_data_trabajo.csv",
+    index=False
+)
+
+print("HE TERMINADO EL ARCHIVO")
