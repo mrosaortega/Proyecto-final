@@ -217,7 +217,14 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-#ignorar archivos en raw
+# ignorar archivos en raw
 
 Data/Raw/1
 Data/Raw/2
+
+# Archivos intermedios demasiado grandes
+Data/Raw/Output/00_Uniones.csv
+Data/Raw/Output/01_data_trabajo.csv
+Data/Raw/Output/01_limpieza.csv
+Data/Raw/Output/03_data_limpio.csv
+

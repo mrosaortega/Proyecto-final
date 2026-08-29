@@ -1,0 +1,58 @@
+
+
+
+import pandas as pd
+
+
+
+# Carga de archivos
+ratings = pd.read_csv("Data/Raw/2/ratings.csv")
+movies = pd.read_csv("Data/Raw/2/movies.csv")
+links = pd.read_csv("Data/Raw/2/links.csv")
+
+tmdb_movies = pd.read_csv("Data/Raw/1/tmdb_5000_movies.csv")
+tmdb_credits = pd.read_csv("Data/Raw/1/tmdb_5000_credits.csv")
+
+
+# PASO 1: ratings + movies
+union_rating_movies = ratings.merge(
+    movies,
+    on="movieId",
+    how="left")
+
+
+# PASO 2: resultado + links
+resultado1_movielens = union_rating_movies.merge(
+    links,
+    on="movieId",
+    how="left"
+)
+
+
+# PASO 3: TMDB movies + TMDB credits
+resultado_tmdb = tmdb_movies.merge(
+    tmdb_credits,
+    left_on="id",
+    right_on="movie_id",
+    how="left"
+)
+
+
+# PASO 4: MovieLens + TMDB
+resultado_final = resultado1_movielens.merge(
+    resultado_tmdb,
+    left_on="tmdbId",
+    right_on="id",
+    how="inner"
+)
+
+print("Filas:", resultado_final.shape[0])
+print("Columnas:", resultado_final.shape[1])
+print(resultado_final.head())
+
+print(resultado_final.isna().sum())
+
+
+print(resultado_final["movieId"].nunique())
+
+resultado_final.to_csv("Data/Raw/Output/00_Uniones.csv", index=False)

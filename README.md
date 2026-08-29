@@ -37,6 +37,8 @@ Archivos utilizados:
 tmdb_5000_movies.csv
 tmdb_5000_credits.csv
 
+Debido al tamaño de los archivos originales, estos no se incluyen en el respositorio.
+
 Variables principales:
 
 Presupuesto (budget)
@@ -100,3 +102,139 @@ La muestra final contiene:
 
 Estos resultados indican que la muestra conserva una elevada variedad de películas, títulos y usuarios, permitiendo desarrollar
 adecuadamente procesos de limpieza, transformación, análisis exploratorio, análisis estadístico y construcción del dashboard final.
+
+
+** 4 - Entendimiento de los datos
+Antes de iniciar las taresa de limpieza y transformacion se realizó una revision individual de cada variable con el objetivo de comprender su significado, identificar posibles duplicidades derivadas ed la integracion de fuentes y determinar su utilidad para el análisis posterior.
+- principales hallazgos:
+la mayoria de las varibales presentan un 0% de nulos (solo dos de ellas presentan nulosw: homepage con un 58,7% y tagline con un 3,61%)
+Se identificaron variables duplicadas derivadas de la integracion (genres_x, genres_y, title_x, title_y, movie_id, id)
+
+
+userId	- int64	- No nulos - mantener
+movieId	-	int64 - No nulos - mantener
+rating	rating	float64	0	0.00
+timestamp	timestamp	int64	0	0.00
+title	title	str	0	0.00
+genres_x	genres_x	str	0	0.00
+imdbId	imdbId	int64	0	0.00
+tmdbId	tmdbId	float64	0	0.00
+budget	budget	int64	0	0.00
+genres_y	genres_y	str	0	0.00
+homepage	homepage	str	41089	58.70
+id	id	int64	0	0.00
+keywords	keywords	str	0	0.00
+original_language	original_language	str	0	0.00
+original_title	original_title	str	0	0.00
+overview	overview	str	0	0.00
+popularity	popularity	float64	0	0.00
+production_companies	production_companies	str	0	0.00
+production_countries	production_countries	str	0	0.00
+release_date	release_date	str	0	0.00
+revenue	revenue	int64	0	0.00
+runtime	runtime	float64	0	0.00
+spoken_languages	spoken_languages	str	0	0.00
+status	status	str	0	0.00
+tagline	tagline	str	2525	3.61
+title_x	title_x	str	0	0.00
+vote_average	vote_average	float64	0	0.00
+vote_count	vote_count	int64	0	0.00
+movie_id	movie_id	int64	0	0.00
+title_y	title_y	str	0	0.00
+cast	cast	str	0	0.00
+crew	crew	str	0	0.00
+
+Se revisó la existencia de registros duplicados derivados de la ingregacion de diferentes fuentes, y de valores unicos.
+
+** 5 Modificacion de datos
+
+Se revisó el tipo de dato de cada valor, modificando a tipo fecha y a tipo str los que correspondían por el tipo de dato.
+Posteriormente, se crea el archivo 03_limpieza_transformacion para seguir limpiando el archivo, de columnas no necesarias debido a duplicidades por la union de los archivos, creación de nuevas columnas necesarias para el análisis y gestión de valores nulos y/o duplicados.
+
+** 6 Limpieza y Transformación de Datos
+
+Una vez realizado el análisis preliminar del conjunto de datos, se procedió a la fase de limpieza y transformación con el objetivo de mejorar la calidad de la información, eliminar redundancias y generar nuevas variables que facilitasen el análisis exploratorio posterior.
+
+6.1. Revisión y corrección de tipos de datos
+
+Durante el análisis preliminar se identificaron variables cuyo tipo de dato no era el más adecuado para su interpretación.
+
+Las columnas: *timestamp* y *release_date*
+
+fueron convertidas a formato fecha para permitir posteriores análisis temporales y la creación de nuevas variables relacionadas con los años "rating_year" y "main_actor".
+
+Variables identificadoras - este tipo de modificación lo hemos hecho en cada archivo ya que se modifica al guardarlo
+
+Las columnas:*userId*, *movieId*, *imdbId*, *tmdbId*, *Id*
+se mofificaron sus valores de tipo int o float a tipo str ya que su función es identificar registros y no representar magnitudes cuantitativas.
+
+- Eliminación de variables redundantes
+
+Durante la integración de MovieLens y TMDB se generaron varias columnas duplicadas o equivalentes.
+
+Tras su revisión, se eliminaron aquellas variables que aportaban información repetida y otras que carecían de valor analítico para los objetivos del proyecto.
+
+Entre ellas se encuentran:
+
+genres_y
+title_y
+homepage
+tagline
+
+La eliminación de estas variables permitió reducir la complejidad del conjunto de datos y facilitar su posterior análisis.
+
+
+- Simplificación de variables complejas
+
+Varias columnas incorporaban información en formato lista o diccionario, dificultando su utilización en análisis estadísticos y
+visualizaciones.
+
+Con el objetivo de simplificar el conjunto de datos se extrajo la información más relevante de cada estructura, creandose columnas adicionales con la información más relevantes: cast, crew, production_companies, production_countries, obteniendo en el mismo orden: actor principal, director, productoera principal y principal pais. Algunos de estos datos devolvian estructuras vacías ([]).
+
+Dado que estos casos representaban un porcentaje muy reducido del conjunto de datos, se decidió mantener los registros y asignar el valor "Unknown" a las variables derivadas correspondientes.
+
+Esta decisión permitió conservar todas las observaciones del dataset sin perder información relevante para el análisis posterior.
+
+en el archivo 02_analisis_preliminar se crearon dos columnas Año de estreno procedentes de timestamp y released_date cuando se modificaron a dato tipo fecha se extrajo el año de cada valor, obteniendo las columnas  rating_year  y release_year, respectivamente.
+
+
+- Tratamiento de valores anómalos
+Presupuesto (budget)
+
+Se observó que un 3,29% de los registros presentaban un valor igual a 0.
+
+Dado que este valor probablemente representa presupuestos no informados y puede generar distorsiones en métricas derivadas, dichos registros fueron transformados en valores nulos (NaN).
+
+Ingresos (revenue)
+
+Se observó igualmente que un 5,24% de los registros presentaban ingresos iguales a 0.
+
+Al igual que en la variable budget, estos registros fueron tratados como valores faltantes y transformados en valores nulos (NaN) para evitar interpretaciones erróneas de la rentabilidad de las películas.
+
+- Nuevas variables
+
+una vez las variables previas budget y revenue se trataron se generaron dos variables numericas "profit" y "roi"
+
+Beneficio estimado = profit = revenue - budget
+
+Retorno sobre la inversión = roi = profit / budget
+
+Resultado de la fase de limpieza y transformación
+
+Tras la ejecución de todas las tareas descritas:
+
+Se eliminaron variables redundantes o sin valor analítico.
+Se corrigieron tipos de datos.
+Se trataron valores nulos y anómalos.
+Se simplificaron estructuras complejas.
+Se generaron variables derivadas con valor analítico.
+Se obtuvo un dataset más limpio, consistente y preparado para la fase de análisis exploratorio y construcción del dashboard final.
+
+** Visualizacion de variables numéricas
+se realizó una exploración de las variables numéricas mediante histogramas y diagramas de caja (boxplots) para analizar su distribución e identificar posibles valores extremos. Esta exploración permitió observar que algunas variables presentaban distribuciones asimétricas y un número elevado de valores extremos.
+
+Para identificar los outliers se realizaron diferentes comprobaciones utilizando los percentiles 75, 90 y 99. Se decidió utilizar el percentil 90 como referencia, ya que el conjunto de datos contiene valores extremos que pueden corresponder a situaciones reales, especialmente en variables como presupuesto, ingresos o popularidad. El percentil 99 no permitió identificar outliers relevantes.
+
+Los valores extremos detectados fueron revisados individualmente para comprobar si eran coherentes con la variable correspondiente. En aquellos casos en los que se identificaron valores que no resultaban razonables, como ocurrió con determinados valores de runtime, estos fueron modificados.
+
+Finalmente, se realizó el tratamiento de los valores nulos presentes en las variables seleccionadas - *budget* y *revenue* y las variables creadas a partir de ellas *roi* y *profit*. En estas variables se realizó una sustitución de los NaN por la mediana de la variable, al considerarse una medida más robusta frente a la presencia de valores extremos.
