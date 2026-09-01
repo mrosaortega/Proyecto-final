@@ -111,39 +111,6 @@ la mayoria de las varibales presentan un 0% de nulos (solo dos de ellas presenta
 Se identificaron variables duplicadas derivadas de la integracion (genres_x, genres_y, title_x, title_y, movie_id, id)
 
 
-userId	- int64	- No nulos - mantener
-movieId	-	int64 - No nulos - mantener
-rating	rating	float64	0	0.00
-timestamp	timestamp	int64	0	0.00
-title	title	str	0	0.00
-genres_x	genres_x	str	0	0.00
-imdbId	imdbId	int64	0	0.00
-tmdbId	tmdbId	float64	0	0.00
-budget	budget	int64	0	0.00
-genres_y	genres_y	str	0	0.00
-homepage	homepage	str	41089	58.70
-id	id	int64	0	0.00
-keywords	keywords	str	0	0.00
-original_language	original_language	str	0	0.00
-original_title	original_title	str	0	0.00
-overview	overview	str	0	0.00
-popularity	popularity	float64	0	0.00
-production_companies	production_companies	str	0	0.00
-production_countries	production_countries	str	0	0.00
-release_date	release_date	str	0	0.00
-revenue	revenue	int64	0	0.00
-runtime	runtime	float64	0	0.00
-spoken_languages	spoken_languages	str	0	0.00
-status	status	str	0	0.00
-tagline	tagline	str	2525	3.61
-title_x	title_x	str	0	0.00
-vote_average	vote_average	float64	0	0.00
-vote_count	vote_count	int64	0	0.00
-movie_id	movie_id	int64	0	0.00
-title_y	title_y	str	0	0.00
-cast	cast	str	0	0.00
-crew	crew	str	0	0.00
-
 Se revisó la existencia de registros duplicados derivados de la ingregacion de diferentes fuentes, y de valores unicos.
 
 ** 5 Modificacion de datos
@@ -238,3 +205,27 @@ Para identificar los outliers se realizaron diferentes comprobaciones utilizando
 Los valores extremos detectados fueron revisados individualmente para comprobar si eran coherentes con la variable correspondiente. En aquellos casos en los que se identificaron valores que no resultaban razonables, como ocurrió con determinados valores de runtime, estos fueron modificados.
 
 Finalmente, se realizó el tratamiento de los valores nulos presentes en las variables seleccionadas - *budget* y *revenue* y las variables creadas a partir de ellas *roi* y *profit*. En estas variables se realizó una sustitución de los NaN por la mediana de la variable, al considerarse una medida más robusta frente a la presencia de valores extremos.
+
+Posteriormente se ha llevado a cabo la limpieza y transformación de los valores en el notebook 03_limpieza_transformaciones
+
+Principalmente se han identificado aquellas columnas con valores únicos para mantenerlas y eliminar aquellas que no aportaban valor o columnas que tenían mismos valores. Por lo que se han eliminado varias variables como "title", "title_x", "title_y","genres_y" que tenian mismos valores que otras. Adicionalmente, se han limpiado los valores de otras columnas como "crew" y "cast" eran variables cuyo valor mostraba un diccionario con diferentes valores, y nos hemos quedado con el más relevante para posteriormente usarlos en la estadística y en el dashboard. Al igual que production_countries y production_companies, se ha sacado el valor principal haciendo otra columna/variable para el resultado, eliminando del df la original con ruido.
+
+Se ha visualizado mediante boxplot las columnas numericas - interpretándose cada variable, viendo los fallos - date, los valores nulos y los outliers. Hemos revisado los outliers, eliminando algunos y modificando por otros cuando se conocia el valor real. 
+En las variables "budget", "revenue" había valores nulos que han sido sustituidos por la mediana y posteriormente hemos sustituido tambien las variables creadas a partir de estas "profit" y "roi".
+
+Se ha visualizado tambien las columnas categoricas dado que en la mayoria de las variables había mas de 10 categorías hemos sacado el top 10 de estas, ya que era complicado de procesar en un gráfico tantos valores. una de las variables tenia valores nulos "homepage" que han sido modificados por "unknown".
+
+Por último se ha realizado un análisis estadístico: (notebook 04_analisis_estadistico) para identificar relaciones entre variables, comprender los principales patrones y extraer principales insights.
+
+Para comenzar se ha realizado una matriz de correlaciones utilizando las principales variables numéricas, con lo que se identificaron relaciones significativas entre diferentes variables.
+
+Seguido de gráficos de dispersión entre diferentes variables, análisis de la variable extraida ROI y modificación de sus valores mediante la transformación de la variable "budget" veiamos que tenia valores que no podían ser reales modificando estos valores muy bajos a la mediana. Reescribiendo las variables *profit* y *ROI*. adicionalmente se creaba otra variable basada en categorias de nivel de presupuesto ya que aun con la modificación habia valores que eran demasiado bajos.
+
+Tambien se han analizado otras relaciones entre variables como género e dioma con el rating y revenue, la identificacion de los top 10 directores con lo que veiamos que si teniamos en cuenta solo directores que habian hecho más de 3 películas, el top cambiaba. Igualmente ocurría con main_country, vimos que había países muy bien valorados pero que si agrupábamos y filtrabamos por paises con mas de 20 peliculas, el top 3 se modificaba por completo. 
+
+las conclusiones obtenidas de este análisis han sido principalmente:
+ - Relación positiva entre presupuesto e ingresos
+ - Popularidad y el numero de valoraciones muestran tambien una fuerte relación
+ - las películas de menos prespuesto presentan una rentabilidad relativa superior
+ - Existen diferencias relevantes entre géneros, idiomas y directores en terminos de valoración y desempeño económico.
+ 
